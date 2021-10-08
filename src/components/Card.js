@@ -14,12 +14,18 @@ const StyledCardWrapper = styled.div`
   }
 `;
 
+const CustomImage = styled.img`
+  width: 100%;
+  height: 50%;
+  object-fit: scale-down;
+`
+
 class Card extends Component {
 
     render(){
         return (
             <StyledCardWrapper onClick={() => history.push(`/product/${this.props.product.id}`, this.props.product)}>
-                <img src={this.props.product?.gallery[0]} alt="item" width="300px" height="300px"/>
+                <CustomImage src={this.props.product?.gallery[0]} alt="item" />
                 <div>
                     <div>{this.props.product.brand}</div>
                     <h3>{getProductPrice(this.props.product.prices, this.props.currency)}</h3>

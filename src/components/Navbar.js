@@ -56,6 +56,9 @@ const StyledSpan = styled.span`
   background: black;
   color: white;
   padding: 1px 4px;
+  position: absolute;
+  top:10px;
+  right: 0;
 `;
 
 class Navbar extends Component {
@@ -63,6 +66,7 @@ class Navbar extends Component {
         super(props);
         this.handleClick = this.handleClick.bind(this);
         this.handleCurrencyChange = this.handleCurrencyChange.bind(this);
+        this.getNumberOfItemsInCart = this.getNumberOfItemsInCart.bind(this);
         this.state = {
             active: '',
         }
@@ -95,6 +99,15 @@ class Navbar extends Component {
         })();
     }
 
+    getNumberOfItemsInCart = () => {
+        let amount = 0;
+        this.props.cart.forEach(item => {
+            amount += item.quantity;
+        });
+
+        return amount;
+    }
+
     render() {
         return (
             <>
@@ -125,7 +138,7 @@ class Navbar extends Component {
                             <img src={CartIcon} alt="Cart icon" onClick={() => this.props.handleShowCartOverlay()}/>
                         </ImageWrapper>
                         {!!this.props.cart.length &&
-                            <StyledSpan>{this.props.cart.length}</StyledSpan>
+                            <StyledSpan>{this.getNumberOfItemsInCart()}</StyledSpan>
                         }
                     </FlexContainer>
                     </StyledNavigation>

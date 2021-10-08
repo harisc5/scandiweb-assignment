@@ -45,12 +45,12 @@ const PriceContainer = styled.div`
 
 const StyledButton = styled.div`
   font-size: 16px;
-  background-color: #5ECE7B;
+  background-color: ${(props) => (props.disabled ? 'gray ': '#5ECE7B')};
   color: white;
   padding: 15px;
   text-align: center;
   
-  &:hover {
+  &:hover:not([disabled]) {
     cursor: pointer;
   }
 `;
@@ -72,6 +72,18 @@ class PDP extends Component {
             product: product,
             primaryImage: product.gallery[0],
             chosenSizes: [],
+            disabled: true
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(this.state.disabled){
+            if(this.state?.product?.attributes[0] && this.state.chosenSizes.length) {
+                this.setState(prevState => ({
+                    ...prevState,
+                    disabled: false
+                }))
+            }
         }
     }
 
@@ -115,10 +127,13 @@ class PDP extends Component {
                           <h4>PRICE:</h4>
                           <h2>{getProductPrice(this.state.product.prices, this.props.currency)}</h2>
                       </PriceContainer>
-                      <StyledButton onClick={() => this.props.addItemToCart({
+                      <StyledButton
+                          onClick={() => this.props.addItemToCart({
                           product: this.state.product,
                           chosenSizes: this.state.chosenSizes
-                      })}>
+                          })}
+                          disabled={this.state.disabled}
+                      >
                           ADD TO CART
                       </StyledButton>
                       <StyledDescription>
