@@ -59,9 +59,7 @@ class Shop extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const { category } = this.props?.match?.params
-        console.log('category', category);
         if(prevState.category !== category && !this.props.products[category]) {
-            console.log('update');
            this.getItemsByCategory();
         }
     }
@@ -73,7 +71,7 @@ class Shop extends Component {
             <div>
                 <Title>{this.capitalizeFirstLetter(this.state.category)}</Title>
                 <ProductContainer>
-                    {this.props.products[this.state.category]?.map((product, index) => (
+                    {this.props.products[this.state?.category]?.map((product, index) => (
                         <Card product={product} key={index}/>
                     ))}
                 </ProductContainer>
