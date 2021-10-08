@@ -76,6 +76,15 @@ class PDP extends Component {
         }
     }
 
+    componentDidMount() {
+        if(!this.state?.product?.attributes[0]) {
+            this.setState(prevState => ({
+                ...prevState,
+                disabled: false
+            }))
+        }
+    }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
         if(this.state.disabled){
             if(this.state?.product?.attributes[0] && this.state.chosenSizes.length) {

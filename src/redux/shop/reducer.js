@@ -5,17 +5,13 @@ import { RATES } from "../../constants";
 export default function reducer(state = initialState.shop, action = {}) {
     const {type, payload} = action;
     // console.log('type', type);
-    // console.log('payload', payload);
     switch (type) {
-        case constants.GET_PRODUCTS_SUCCESS:
-           let categories = {};
-           payload.products.forEach(product => {
-                categories[product?.name] = product?.products;
-           })
+        case constants.GET_PRODUCTS_BY_CATEGORY_SUCCESS:
+            // console.log('payload', payload);
             return {
                 ...state,
                 products: {
-                    ...categories
+                    [payload.category]: payload.products
                 }
             }
         case constants.ADD_ITEM_TO_CART_SUCCESS:

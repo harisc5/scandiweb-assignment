@@ -1,7 +1,7 @@
 import {
     addItemToCartSuccess,
     removeItemFromCartSuccess,
-    getProductsSuccess,
+    getProductsByCategorySuccess,
     changeCurrencySuccess,
     increaseProductAmountSuccess,
     decreaseProductAmountSuccess,
@@ -18,8 +18,8 @@ export const removeItemFromCart = (item) => (dispatch) => {
     dispatch(removeItemFromCartSuccess(item));
 };
 
-export const getProducts = (products) => (dispatch) => {
-    dispatch(getProductsSuccess(products));
+export const getProductsByCategory = (products, category) => (dispatch) => {
+    dispatch(getProductsByCategorySuccess(products, category));
 }
 
 export const changeCurrency = (currency) => (dispatch) => {

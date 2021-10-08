@@ -5,9 +5,9 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import Card from "./Card";
 import client from "../apollo-client";
-import { getCurrencies, getProducts, handleShowCartOverlay } from "../redux/shop/actions";
+import { getCurrencies, getProductsByCategory, handleShowCartOverlay } from "../redux/shop/actions";
 import { StyledOverlay } from "../shared-components";
-import { GET_PRODUCTS } from "../queries";
+import { GET_PRODUCTS_BY_CATEGORY } from "../queries";
 
 const Title = styled.h1`
   text-align: left;
@@ -35,37 +35,38 @@ class Shop extends Component {
             category: ''
         }
     }
+
+    getItemsByCategory = async () => {
+        const { category } = this.props?.match?.params;
+        const categoryQuery = GET_PRODUCTS_BY_CATEGORY(category);
+        // console.log('category ', categoryQuery);
+        const productResult = await client
+            .query({
+                query: gql`${categoryQuery}`
+            });
+        // console.log('product result', productResult?.data?.category);
+        this.props.getProductsByCategory(productResult?.data?.category?.products, category);
+
+
+        this.setState((prevState) => ({
+            ...prevState,
+            category,
+        }))
+    }
     componentDidMount = () => {
-        (async () => {
-            const productResult = await client
-                .query({
-                    query: gql`${GET_PRODUCTS}`
-                });
-            this.props.getProducts(productResult?.data?.categories);
-
-            const { category } = this.props?.match?.params;
-
-            this.setState((prevState) => ({
-                ...prevState,
-                category,
-            }))
-        })();
+        this.getItemsByCategory();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const { category } = this.props?.match?.params
-        // console.log('updated', this.props?.match?.params)
-        // console.log('prev state ', prevState)
-        if(prevState.category !== category) {
-            this.setState({
-                ...prevState,
-                category,
-            })
+        console.log('category', category);
+        if(prevState.category !== category && !this.props.products[category]) {
+            console.log('update');
+           this.getItemsByCategory();
         }
     }
 
     capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
-
 
     render() {
         return (
@@ -85,4 +86,4 @@ class Shop extends Component {
 export default connect((state) => ({
     products: state.shop.products,
     showCartOverlay: state.shop.showCartOverlay,
-}), { getProducts, handleShowCartOverlay, getCurrencies })(withRouter(Shop));
+}), { getProductsByCategory, handleShowCartOverlay, getCurrencies })(withRouter(Shop));

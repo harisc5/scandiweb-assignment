@@ -94,7 +94,7 @@ class Navbar extends Component {
             this.props.getCategories(categoriesResult?.data?.categories);
             this.props.getCurrencies(currenciesResult?.data?.currencies);
             this.setState({
-                active: categoriesResult?.data?.categories[0]?.name
+                active: window.location.pathname.slice(1)
             })
         })();
     }

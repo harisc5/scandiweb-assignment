@@ -14,10 +14,11 @@ export const removeItemFromCartSuccess = (item) => ({
     },
 });
 
-export const getProductsSuccess = (products) => ({
-    type: constants.GET_PRODUCTS_SUCCESS,
+export const getProductsByCategorySuccess = (products, category) => ({
+    type: constants.GET_PRODUCTS_BY_CATEGORY_SUCCESS,
     payload: {
-        products
+        products,
+        category
     }
 })
 
