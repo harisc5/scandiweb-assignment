@@ -10,6 +10,8 @@ const FlexContainer = styled.div`
   display: flex;
   flex-direction: ${(props) => (props.flexdirection ? props.flexdirection : 'row')};;
   justify-content: space-evenly;
+  max-width: ${(props) => (props.maxwidth ? props.maxwidth : '')};;
+
 `;
 
 const ImageWrapper = styled.div`
@@ -19,7 +21,9 @@ const ImageWrapper = styled.div`
 ;`
 
 const SizeContainer = styled.span`
-  border: 1px solid black;
+  width: 63px;
+  height: 45px;
+  border: 1px solid #1D1F22;
   font-size: 18px;
   margin: 5px;
   padding: 10px;
@@ -41,7 +45,7 @@ const PriceContainer = styled.div`
 
 const StyledButton = styled.div`
   font-size: 16px;
-  background-color: #03fc28;
+  background-color: #5ECE7B;
   color: white;
   padding: 15px;
   text-align: center;
@@ -82,27 +86,31 @@ class PDP extends Component {
                 ))}
             </ImageListContainer>
               <div>
-                  <img src={this.state.primaryImage} width="300px" height="300px" alt="primary"/>
+                  <img src={this.state?.primaryImage} width="300px" height="300px" alt="primary"/>
               </div>
               <div>
                   <div>
-                      <StyledSizeHeader>{this.state.product.brand}</StyledSizeHeader>
+                      <StyledSizeHeader>{this.state?.product?.brand}</StyledSizeHeader>
                   </div>
-                  <FlexContainer flexdirection="column">
-                      <StyledSizeHeader>SIZE:</StyledSizeHeader>
-                      <div>
-                          {this.state.product.attributes[0].items.map((size, sizeIndex) => (
-                              <SizeContainer
-                                  key={sizeIndex}
-                                  selected={this.state.chosenSizes.includes(size.id)}
-                                  onClick={() => this.setState(state => ({
-                                  ...state,
-                                  chosenSizes: [size.id]
-                              }))}>
+                  <FlexContainer flexdirection="column" maxwidth="500px">
+                      {!!this.state?.product?.attributes?.length &&
+                          <>
+                              <StyledSizeHeader>SIZE:</StyledSizeHeader>
+                              <div>
+                                  {this.state?.product?.attributes[0]?.items?.map((size, sizeIndex) => (
+                                      <SizeContainer
+                                      key={sizeIndex}
+                                      selected={this.state.chosenSizes?.includes(size?.id)}
+                                      onClick={() => this.setState(state => ({
+                                      ...state,
+                                      chosenSizes: [size?.id]
+                                      }))}>
                                   {size?.displayValue}
-                              </SizeContainer>
-                          ))}
-                      </div>
+                                      </SizeContainer>
+                                  ))}
+                              </div>
+                          </>
+                      }
                       <PriceContainer>
                           <h4>PRICE:</h4>
                           <h2>{getProductPrice(this.state.product.prices, this.props.currency)}</h2>

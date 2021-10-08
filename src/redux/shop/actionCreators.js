@@ -14,8 +14,8 @@ export const removeItemFromCartSuccess = (item) => ({
     },
 });
 
-export const addAllProductsSuccess = (products) => ({
-    type: constants.ADD_ALL_PRODUCTS_SUCCESS,
+export const getProductsSuccess = (products) => ({
+    type: constants.GET_PRODUCTS_SUCCESS,
     payload: {
         products
     }
@@ -47,4 +47,17 @@ export const decreaseProductAmountSuccess = (id, size) => ({
 export const showCartOverlaySuccess = () => ({
     type: constants.SHOW_CART_OVERLAY_SUCCESS,
     payload: {},
+});
+
+export const getCategoriesSuccess = (categories) => ({
+    type: constants.GET_CATEGORIES_SUCCESS,
+    payload: {
+        categories
+    },
+});
+export const getCurrenciesSuccess = (currencies) => ({
+    type: constants.GET_CURRENCIES_SUCCESS,
+    payload: {
+        currencies
+    },
 });

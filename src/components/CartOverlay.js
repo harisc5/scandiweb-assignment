@@ -164,7 +164,7 @@ class CartOverlay extends Component {
                                 VIEW BAG
                             </CustomButton>
                             <CustomButton
-                                backgroundcolor={"#03fc28"}
+                                backgroundcolor={"#5ECE7B"}
                                 textcolor={'white'}
                                 borderunset
                                 onClick={() => alert('THANK YOU FOR BUYING')}

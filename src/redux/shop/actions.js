@@ -1,11 +1,13 @@
 import {
     addItemToCartSuccess,
     removeItemFromCartSuccess,
-    addAllProductsSuccess,
+    getProductsSuccess,
     changeCurrencySuccess,
     increaseProductAmountSuccess,
     decreaseProductAmountSuccess,
-    showCartOverlaySuccess
+    showCartOverlaySuccess,
+    getCategoriesSuccess,
+    getCurrenciesSuccess
 } from './actionCreators';
 
 export const addItemToCart = (item) => (dispatch) => {
@@ -16,8 +18,8 @@ export const removeItemFromCart = (item) => (dispatch) => {
     dispatch(removeItemFromCartSuccess(item));
 };
 
-export const addAllProducts = (products) => (dispatch) => {
-    dispatch(addAllProductsSuccess(products));
+export const getProducts = (products) => (dispatch) => {
+    dispatch(getProductsSuccess(products));
 }
 
 export const changeCurrency = (currency) => (dispatch) => {
@@ -34,5 +36,13 @@ export const decreaseProductAmount = (id, size) => (dispatch) => {
 
 export const handleShowCartOverlay = () => (dispatch) => {
     dispatch(showCartOverlaySuccess());
+};
+
+export const getCategories = (categories) => (dispatch) => {
+    dispatch(getCategoriesSuccess(categories));
+};
+
+export const getCurrencies = (currencies) => (dispatch) => {
+    dispatch(getCurrenciesSuccess(currencies));
 };
 

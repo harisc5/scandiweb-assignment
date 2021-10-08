@@ -6,7 +6,7 @@ import { getProductPrice } from "../helpers";
 
 const StyledCardWrapper = styled.div`
   width: 33%;
-  height: 300px;
+  //height: 300px;
   margin: 2px;
   
   &:hover {

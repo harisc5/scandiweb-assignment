@@ -2,15 +2,19 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { gql } from "@apollo/client";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import Card from "./Card";
 import client from "../apollo-client";
-import { addAllProducts, handleShowCartOverlay } from "../redux/shop/actions";
+import { getCurrencies, getProducts, handleShowCartOverlay } from "../redux/shop/actions";
 import { StyledOverlay } from "../shared-components";
+import { GET_PRODUCTS } from "../queries";
 
 const Title = styled.h1`
   text-align: left;
   color: black;
   padding: 20px;
+  font-size: 42px;
+  font-weight: 400;
 `;
 
 const ProductContainer = styled.div`
@@ -21,49 +25,54 @@ const ProductContainer = styled.div`
 
 class Shop extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.capitalizeFirstLetter = this.capitalizeFirstLetter.bind(this);
+
+        this.state = {
+            items: [],
+            category: ''
+        }
+    }
     componentDidMount = () => {
         (async () => {
-            const result = await client
+            const productResult = await client
                 .query({
-                    query: gql`
-                    query getClothes {
-                          categories {
-                            name
-                            products {
-                              description
-                              brand
-                              id
-                              gallery
-                              inStock
-                              category
-                              prices {
-                                amount,
-                                currency
-                              }
-                              attributes {
-                                name,
-                                id,
-                                items {
-                                  displayValue,
-                                  value,
-                                  id
-                                }
-                              }
-                            }
-                          }
-                        }
-                    `
+                    query: gql`${GET_PRODUCTS}`
                 });
-            this.props.addAllProducts(result.data.categories);
+            this.props.getProducts(productResult?.data?.categories);
+
+            const { category } = this.props?.match?.params;
+
+            this.setState((prevState) => ({
+                ...prevState,
+                category,
+            }))
         })();
     }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const { category } = this.props?.match?.params
+        // console.log('updated', this.props?.match?.params)
+        // console.log('prev state ', prevState)
+        if(prevState.category !== category) {
+            this.setState({
+                ...prevState,
+                category,
+            })
+        }
+    }
+
+    capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+
 
     render() {
         return (
             <div>
-                <Title>Clothes</Title>
+                <Title>{this.capitalizeFirstLetter(this.state.category)}</Title>
                 <ProductContainer>
-                    {this.props.products?.clothes?.map((product, index) => (
+                    {this.props.products[this.state.category]?.map((product, index) => (
                         <Card product={product} key={index}/>
                     ))}
                 </ProductContainer>
@@ -76,4 +85,4 @@ class Shop extends Component {
 export default connect((state) => ({
     products: state.shop.products,
     showCartOverlay: state.shop.showCartOverlay,
-}), { addAllProducts, handleShowCartOverlay })(Shop);
+}), { getProducts, handleShowCartOverlay, getCurrencies })(withRouter(Shop));

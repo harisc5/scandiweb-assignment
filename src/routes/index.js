@@ -7,23 +7,17 @@ import Cart from "../components/Cart";
 export const Routes = () => (
     <Router history={history}>
         <Switch>
-            <Route path="/women" exact>
-                <Shop/>
-            </Route>
-            <Route path="/men" exact>
-                <Shop/>
-            </Route>
-            <Route path="/kids" exact>
-                <Shop/>
-            </Route>
             <Route path="/product/:id" exact>
                 <PDP/>
             </Route>
             <Route path="/cart" exact>
                 <Cart/>
             </Route>
+            <Route path="/:category" exact>
+                <Shop/>
+            </Route>
             <Route path="/*">
-                <Redirect to={"/women"}/>
+                <Redirect to={"/clothes"}/>
             </Route>
         </Switch>
     </Router>
