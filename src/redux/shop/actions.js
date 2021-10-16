@@ -26,12 +26,12 @@ export const changeCurrency = (currency) => (dispatch) => {
     dispatch(changeCurrencySuccess(currency));
 };
 
-export const increaseProductAmount = (id, size) => (dispatch) => {
-    dispatch(increaseProductAmountSuccess(id, size));
+export const increaseProductAmount = (id, attributes) => (dispatch) => {
+    dispatch(increaseProductAmountSuccess(id, attributes));
 };
 
-export const decreaseProductAmount = (id, size) => (dispatch) => {
-    dispatch(decreaseProductAmountSuccess(id, size));
+export const decreaseProductAmount = (id, attributes) => (dispatch) => {
+    dispatch(decreaseProductAmountSuccess(id, attributes));
 };
 
 export const handleShowCartOverlay = () => (dispatch) => {

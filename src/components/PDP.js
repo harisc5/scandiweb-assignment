@@ -1,10 +1,14 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import styled from "styled-components";
 import { withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
+import { gql } from "@apollo/client";
+import ReactHtmlParser from 'react-html-parser';
 import { addItemToCart, handleShowCartOverlay } from "../redux/shop/actions";
 import { StyledOverlay } from "../shared-components";
-import { getProductPrice, removeTags } from "../helpers";
+import { getProductPrice, stringContainsDangerousTags} from "../helpers";
+import { GET_PRODUCT_BY_ID } from "../queries";
+import client from "../apollo-client";
 
 const FlexContainer = styled.div`
   display: flex;
@@ -58,6 +62,7 @@ const StyledButton = styled.div`
 const StyledDescription = styled.div`
   padding-top: 30px;
   text-align: justify;
+  max-width: 300px;
 `;
 
 const ImageListContainer = styled.div`
@@ -67,27 +72,38 @@ const ImageListContainer = styled.div`
 class PDP extends Component {
     constructor(props) {
         super(props);
-        const product = this.props?.history?.location?.state;
+        this.handleAttributes = this.handleAttributes.bind(this);
         this.state = {
-            product: product,
-            primaryImage: product.gallery[0],
+            product: {},
+            primaryImage: "",
             chosenSizes: [],
+            attributes: {},
             disabled: true
         }
     }
 
     componentDidMount() {
-        if(!this.state?.product?.attributes[0]) {
-            this.setState(prevState => ({
-                ...prevState,
-                disabled: false
-            }))
-        }
+        (async () => {
+            const id = this.props?.history?.location?.state;
+            const { data } = await client
+                .query({
+                    query: gql`${GET_PRODUCT_BY_ID(id)}`
+                });
+            if(data) {
+                this.setState(prevState => ({
+                    ...prevState,
+                    product: data?.product,
+                    disabled: !!data?.product?.attributes,
+                    primaryImage: data?.product?.gallery[0]
+                }))
+            }
+        })();
+
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if(this.state.disabled){
-            if(this.state?.product?.attributes[0] && this.state.chosenSizes.length) {
+            if(this.state?.product?.attributes?.length === Object.keys(this.state?.attributes)?.length) {
                 this.setState(prevState => ({
                     ...prevState,
                     disabled: false
@@ -96,58 +112,72 @@ class PDP extends Component {
         }
     }
 
+    handleAttributes = (property, value) => {
+        let attributesCopy = {...this.state.attributes};
+        attributesCopy[property] = value;
+        this.setState(prevState => ({
+            ...prevState,
+            attributes: attributesCopy
+        }))
+    }
+
     render() {
         return (
           <FlexContainer>
             <ImageListContainer>
-                {this.state.product.gallery.map((image, index) => (
+                {this.state.product?.gallery?.map((image, index) => (
                     <ImageWrapper onClick={() => this.setState((state) => ({...state, primaryImage: image}))} key={index}>
                         <img src={image} width="70px" height="70px" alt="product" />
                     </ImageWrapper>
                 ))}
             </ImageListContainer>
               <div>
-                  <img src={this.state?.primaryImage} width="300px" height="300px" alt="primary"/>
+                  <img src={this.state?.primaryImage} alt="primary"/>
               </div>
               <div>
                   <div>
                       <StyledSizeHeader>{this.state?.product?.brand}</StyledSizeHeader>
+                      <StyledSizeHeader>{this.state?.product?.name}</StyledSizeHeader>
                   </div>
                   <FlexContainer flexdirection="column" maxwidth="500px">
                       {!!this.state?.product?.attributes?.length &&
                           <>
-                              <StyledSizeHeader>SIZE:</StyledSizeHeader>
                               <div>
-                                  {this.state?.product?.attributes[0]?.items?.map((size, sizeIndex) => (
-                                      <SizeContainer
-                                      key={sizeIndex}
-                                      selected={this.state.chosenSizes?.includes(size?.id)}
-                                      onClick={() => this.setState(state => ({
-                                      ...state,
-                                      chosenSizes: [size?.id]
-                                      }))}>
-                                  {size?.displayValue}
-                                      </SizeContainer>
+                                  {this.state?.product?.attributes?.map((attribute, sizeIndex) => (
+                                      <Fragment key={sizeIndex}>
+                                          <StyledSizeHeader>{attribute.name.toUpperCase()}</StyledSizeHeader>
+                                          {attribute?.items.map((item, itemIndex) => (
+                                              <SizeContainer
+                                                  key={itemIndex}
+                                                  selected={this.state.attributes[attribute?.id] === item?.id}
+                                                  onClick={() => this.handleAttributes(attribute?.id, item?.id)}
+                                              >
+                                                  {item?.displayValue}
+                                              </SizeContainer>
+                                          ))}
+                                      </Fragment>
                                   ))}
                               </div>
                           </>
                       }
                       <PriceContainer>
                           <h4>PRICE:</h4>
-                          <h2>{getProductPrice(this.state.product.prices, this.props.currency)}</h2>
+                          <h2>{getProductPrice(this.state.product?.prices, this.props.currency)}</h2>
                       </PriceContainer>
                       <StyledButton
                           onClick={() => this.props.addItemToCart({
                           product: this.state.product,
-                          chosenSizes: this.state.chosenSizes
+                          attributes: this.state.attributes
                           })}
                           disabled={this.state.disabled}
                       >
                           ADD TO CART
                       </StyledButton>
-                      <StyledDescription>
-                          {removeTags(this.state.product.description)}
-                      </StyledDescription>
+                      {!stringContainsDangerousTags(this.state?.product?.description) &&
+                          <StyledDescription>
+                              {ReactHtmlParser(this.state.product?.description)}
+                          </StyledDescription>
+                      }
                   </FlexContainer>
               </div>
               {this.props.showCartOverlay && <StyledOverlay onClick={() => this.props.handleShowCartOverlay()}/>}

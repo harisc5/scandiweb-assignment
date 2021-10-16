@@ -12,6 +12,7 @@ export const GET_PRODUCTS = `
             products {
               description
               brand
+              name
               id
               gallery
               inStock
@@ -44,6 +45,7 @@ export const GET_PRODUCTS_BY_CATEGORY = (category) =>`
    products {
       description
       brand
+      name
       id
       gallery
       inStock
@@ -63,5 +65,31 @@ export const GET_PRODUCTS_BY_CATEGORY = (category) =>`
       }
    }
  }
+}
+`;
+
+export const GET_PRODUCT_BY_ID = (id) => `
+{
+  product(id: "${id}"){
+    name,
+    brand,
+    gallery,
+    attributes {
+        name,
+        id,
+        items {
+          displayValue,
+          value,
+          id
+        }
+    },
+    inStock,
+    id,
+    description,
+    prices {
+      amount,
+      currency
+    }
+  }
 }
 `;

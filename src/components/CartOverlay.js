@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
+import ReactHtmlParser from "react-html-parser";
 import { decreaseProductAmount, handleShowCartOverlay, increaseProductAmount } from "../redux/shop/actions";
 import history from "../routes/history";
-import { getProductPrice, removeTags } from "../helpers";
+import { getNumberOfItemsInCart, getProductPrice, stringContainsDangerousTags } from "../helpers";
 import { TextCenter } from "../shared-components";
 
 const StyledCartOverlay = styled.div`
@@ -11,18 +12,19 @@ const StyledCartOverlay = styled.div`
   top: 55px;
   right: 20px;
   z-index: 1;
-  width: 300px;
+  width: 350px;
   background-color: white;
   padding: 5px;
 `;
 
 const SizeContainer = styled.span`
   border: 1px solid black;
-  font-size: 12px;
+  font-size: 14px;
   margin: 1px;
   padding: 5px;
-  color: ${(props) => (props.selected ? 'white ': 'black')};;
-  background-color: ${(props) => (props.selected ? 'black ': 'white')};;
+  color: black;
+  background-color: ${(props) => (props.selected ? 'white ': '#A6A6A6')};
+  opacity: ${(props) => (props.selected ?  1 : 0.5)};
 `;
 
 const Header = styled.div`
@@ -39,7 +41,7 @@ const Description = styled.div`
 const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-evenly;
 `;
 
 const ImageWrapper = styled.div`
@@ -64,12 +66,19 @@ const FlexContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-const SizeWrapper = styled.div`
-  padding: 10px 2px;
-`;
-
 const StyledImage = styled.img`
   align-self: center;
+`;
+
+const AttributesFlexContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+`;
+
+const AttributeName = styled.div`
+  margin: 20px 0;
 `;
 
 class CartOverlay extends Component {
@@ -101,45 +110,60 @@ class CartOverlay extends Component {
             <StyledCartOverlay>
                 {!!this.props.cart.length ?
                     <>
-                        <Header>My bag, {this.props.cart.length} items</Header>
+                        <Header>My bag, {getNumberOfItemsInCart(this.props.cart)} items</Header>
                         <div>
-                            {this.props.cart.map(({ item, quantity }, index) => (
+                            {this.props.cart.map(({ item: cartItem, quantity }, index) => (
                                 <Fragment key={index}>
                                     <FlexContainer>
                                         <div>
                                             <Header>
-                                                {item.product.brand}
+                                                {cartItem.product.brand}
                                             </Header>
-                                            <Description>
-                                                {removeTags(item.product.description)}
-                                            </Description>
                                             <Header>
-                                                {getProductPrice(item.product.prices, this.props.currency)}
+                                                {cartItem.product.name}
                                             </Header>
-                                            <SizeWrapper>
-                                                {item.product.attributes[0].items.map((size, index) => (
-                                                    <SizeContainer
-                                                        selected={item.chosenSizes.includes(size.id)}
-                                                        key={index}
-                                                    >
-                                                        {size?.displayValue}
-                                                    </SizeContainer>
-                                                ))}
-                                            </SizeWrapper>
+                                            {!stringContainsDangerousTags(this.state?.product?.description) &&
+                                                <Description>
+                                                    {ReactHtmlParser(this.state.product?.description)}
+                                                </Description>
+                                            }
+                                            <Header>
+                                                {getProductPrice(cartItem.product.prices, this.props.currency)}
+                                            </Header>
+                                            <AttributesFlexContainer>
+                                                {!!cartItem?.product?.attributes?.length &&
+                                                    <>
+                                                        <div>
+                                                            {cartItem?.product?.attributes?.map((attribute, sizeIndex) => (
+                                                                <Fragment key={sizeIndex}>
+                                                                    <AttributeName>{attribute.name.toUpperCase()}</AttributeName>
+                                                                    {attribute?.items?.map((item, itemIndex) => (
+                                                                        <SizeContainer
+                                                                            key={itemIndex}
+                                                                            selected={cartItem?.attributes[attribute?.id] === item?.id}
+                                                                        >
+                                                                            {item?.displayValue}
+                                                                        </SizeContainer>
+                                                                    ))}
+                                                                </Fragment>
+                                                            ))}
+                                                        </div>
+                                                    </>
+                                                }
+                                            </AttributesFlexContainer>
                                         </div>
                                         <ImageWrapper>
                                             <ButtonWrapper>
                                                 <CustomButton
                                                     onClick={() =>
-                                                        this.props.increaseProductAmount(item?.product?.id, item.chosenSizes[0])
+                                                        this.props.increaseProductAmount(cartItem?.product?.id, cartItem?.attributes)
                                                     }
                                                 >
                                                     +
                                                 </CustomButton>
                                                 <TextCenter>{quantity}</TextCenter>
-                                                <CustomButton onClick={() => quantity > 1 &&
-                                                    this.props.decreaseProductAmount(item.product.id, item.chosenSizes[0])}
-                                                              disabled={quantity === 1}
+                                                <CustomButton onClick={() =>
+                                                    this.props.decreaseProductAmount(cartItem?.product?.id, cartItem?.attributes)}
                                                 >
                                                     -
                                                 </CustomButton>
@@ -147,7 +171,7 @@ class CartOverlay extends Component {
                                             <StyledImage
                                                 width="60px"
                                                 height="60px"
-                                                src={item.product.gallery[0]}
+                                                src={cartItem.product.gallery[0]}
                                                 alt="product"
                                             />
                                         </ImageWrapper>

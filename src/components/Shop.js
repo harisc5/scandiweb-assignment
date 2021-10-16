@@ -39,12 +39,10 @@ class Shop extends Component {
     getItemsByCategory = async () => {
         const { category } = this.props?.match?.params;
         const categoryQuery = GET_PRODUCTS_BY_CATEGORY(category);
-        // console.log('category ', categoryQuery);
         const productResult = await client
             .query({
                 query: gql`${categoryQuery}`
             });
-        // console.log('product result', productResult?.data?.category);
         this.props.getProductsByCategory(productResult?.data?.category?.products, category);
 
 
@@ -69,14 +67,20 @@ class Shop extends Component {
     render() {
         return (
             <div>
-                <Title>{this.capitalizeFirstLetter(this.state.category)}</Title>
-                <ProductContainer>
-                    {this.props.products[this.state?.category]?.map((product, index) => (
-                        <Card product={product} key={index}/>
-                    ))}
-                </ProductContainer>
-                {this.props.showCartOverlay && <StyledOverlay onClick={() => this.props.handleShowCartOverlay()}/>}
+                {this.props?.products[this.state?.category]?
+                    <div>
+                        <Title>{this.capitalizeFirstLetter(this.state.category)}</Title>
+                        <ProductContainer>
+                            {this.props?.products[this.state?.category]?.map((product, index) => (
+                                <Card product={product} key={index}/>
+                            ))}
+                        </ProductContainer>
+                        {this.props.showCartOverlay && <StyledOverlay onClick={() => this.props.handleShowCartOverlay()}/>}
+                    </div>:
+                    <h1>No products available</h1>
+                }
             </div>
+
         );
     }
 }

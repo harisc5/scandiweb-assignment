@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { decreaseProductAmount, handleShowCartOverlay, increaseProductAmount } from "../redux/shop/actions";
 import { StyledOverlay, TextCenter } from "../shared-components";
-import { getProductPrice, removeTags } from "../helpers";
+import { getProductPrice } from "../helpers";
 
 const SizeContainer = styled.span`
   border: 1px solid black;
@@ -17,18 +17,13 @@ const SizeContainer = styled.span`
 const Header = styled.div`
   font-size: 24px;
   font-weight: bold;
-  padding: 10px 20px;
+  padding: 10px 5px;
 `;
 
 const BreakLine = styled.hr`
   border: 1px solid #E9E9E9;
   width: 100%;
   margin-top: 25px;
-`;
-
-const Description = styled.div`
-  font-size: 18px;
-  padding: 10px 20px;
 `;
 
 const ButtonWrapper = styled.div`
@@ -57,8 +52,8 @@ const FlexContainer = styled.div`
   justify-content: space-between;
 `;
 
-const SizeWrapper = styled.div`
-  padding: 15px;
+const AttributeName = styled.div`
+  margin: 20px 5px;
 `;
 
 class Cart extends Component {
@@ -110,45 +105,53 @@ class Cart extends Component {
                     <>
                         <Header>Cart</Header>
                         <div>
-                            {this.props.cart.map(({ item, quantity }, index) => (
+                            {this.props.cart.map(({ item: cartItem, quantity }, index) => (
                                 <Fragment key={index}>
                                     <BreakLine/>
                                     <FlexContainer>
                                         <div>
                                             <Header>
-                                                {item.product.brand}
+                                                {cartItem.product.brand}
                                             </Header>
-                                            <Description>
-                                                {removeTags(item.product.description)}
-                                            </Description>
                                             <Header>
-                                                {getProductPrice(item.product.prices, this.props.currency)}
+                                                {cartItem.product.name}
                                             </Header>
-                                            <SizeWrapper>
-                                                {item.product.attributes[0].items.map((size, sizeIndex) => (
-                                                    <SizeContainer
-                                                        key={sizeIndex}
-                                                        selected={item.chosenSizes.includes(size.id)}
-                                                    >
-                                                        {size?.displayValue}
-                                                    </SizeContainer>
-                                                ))}
-                                            </SizeWrapper>
+                                            <Header>
+                                                {getProductPrice(cartItem.product.prices, this.props.currency)}
+                                            </Header>
+                                            {!!cartItem?.product?.attributes?.length &&
+                                                <>
+                                                    <div>
+                                                        {cartItem?.product?.attributes?.map((attribute, sizeIndex) => (
+                                                            <Fragment key={sizeIndex}>
+                                                                <AttributeName>{attribute.name.toUpperCase()}</AttributeName>
+                                                                {attribute?.items?.map((item, itemIndex) => (
+                                                                    <SizeContainer
+                                                                        key={itemIndex}
+                                                                        selected={cartItem?.attributes[attribute?.id] === item?.id}
+                                                                    >
+                                                                        {item?.displayValue}
+                                                                    </SizeContainer>
+                                                                ))}
+                                                            </Fragment>
+                                                        ))}
+                                                    </div>
+                                                </>
+                                            }
                                         </div>
                                         <ImageWrapper>
                                             <ButtonWrapper>
-                                                <CustomButton onClick={() => this.props.increaseProductAmount(item.product?.id, item.chosenSizes[0])}>+</CustomButton>
+                                                <CustomButton onClick={() => this.props.increaseProductAmount(cartItem.product?.id, cartItem.attributes)}>+</CustomButton>
                                                 <TextCenter>{quantity}</TextCenter>
                                                 <CustomButton
-                                                    onClick={() => quantity > 1 &&
-                                                        this.props.decreaseProductAmount(item.product.id, item.chosenSizes[0])}
-                                                    disabled={quantity === 1}
+                                                    onClick={() =>
+                                                        this.props.decreaseProductAmount(cartItem.product.id, cartItem.attributes)}
                                                 >
                                                     -
                                                 </CustomButton>
                                             </ButtonWrapper>
                                             <CustomButton
-                                                onClick={() => this.updateCurrentProductImage(index, item.product.gallery.length, false)}
+                                                onClick={() => this.updateCurrentProductImage(index, cartItem.product.gallery.length, false)}
                                                 borderunset
                                             >
                                                 {`<`}
@@ -156,11 +159,11 @@ class Cart extends Component {
                                             <img
                                                 width="300px"
                                                 height="300px"
-                                                src={item.product.gallery[this.state.activeImages[index]]}
+                                                src={cartItem.product.gallery[this.state.activeImages[index]]}
                                                 alt="product"
                                             />
                                             <CustomButton
-                                                onClick={() => this.updateCurrentProductImage(index, item.product.gallery.length)}
+                                                onClick={() => this.updateCurrentProductImage(index, cartItem.product.gallery.length)}
                                                 borderunset
                                             >
                                                 {`>`}

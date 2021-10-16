@@ -11,6 +11,7 @@ export const StyledOverlay = styled.div`
 `;
 
 export const ImageWrapper = styled.div`
+  margin-right: 5px;
   &:hover {
     cursor: pointer;
   }

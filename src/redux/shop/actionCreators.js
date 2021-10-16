@@ -29,19 +29,19 @@ export const changeCurrencySuccess = (currency) => ({
     },
 });
 
-export const increaseProductAmountSuccess = (id, size) => ({
+export const increaseProductAmountSuccess = (id, attributes) => ({
     type: constants.INCREASE_PRODUCT_AMOUNT_SUCCESS,
     payload: {
         id,
-        size,
+        attributes,
     },
 });
 
-export const decreaseProductAmountSuccess = (id, size) => ({
+export const decreaseProductAmountSuccess = (id, attributes) => ({
     type: constants.DECREASE_PRODUCT_AMOUNT_SUCCESS,
     payload: {
         id,
-        size,
+        attributes,
     },
 });
 
