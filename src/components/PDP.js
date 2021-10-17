@@ -12,10 +12,10 @@ import client from "../apollo-client";
 
 const FlexContainer = styled.div`
   display: flex;
-  flex-direction: ${(props) => (props.flexdirection ? props.flexdirection : 'row')};;
+  flex-direction: ${(props) => (props.flexdirection ? props.flexdirection : 'row')};
   justify-content: space-evenly;
-  max-width: ${(props) => (props.maxwidth ? props.maxwidth : '')};;
-
+  max-width: ${(props) => (props.maxwidth ? props.maxwidth : '')};
+  padding-top: 20px;
 `;
 
 const ImageWrapper = styled.div`
@@ -69,6 +69,11 @@ const ImageListContainer = styled.div`
   padding: 10px;
 `
 
+const CustomImage = styled.img`
+  width: 79px;
+  height: 80px;
+`;
+
 class PDP extends Component {
     constructor(props) {
         super(props);
@@ -84,21 +89,24 @@ class PDP extends Component {
 
     componentDidMount() {
         (async () => {
-            const id = this.props?.history?.location?.state;
-            const { data } = await client
-                .query({
-                    query: gql`${GET_PRODUCT_BY_ID(id)}`
-                });
-            if(data) {
-                this.setState(prevState => ({
-                    ...prevState,
-                    product: data?.product,
-                    disabled: !!data?.product?.attributes,
-                    primaryImage: data?.product?.gallery[0]
-                }))
+            try {
+                const id = this.props?.history?.location?.state;
+                const {data} = await client
+                    .query({
+                        query: gql`${GET_PRODUCT_BY_ID(id)}`
+                    });
+                if (data) {
+                    this.setState(prevState => ({
+                        ...prevState,
+                        product: data?.product,
+                        disabled: !!data?.product?.attributes,
+                        primaryImage: data?.product?.gallery[0]
+                    }))
+                }
+            } catch (e) {
+                console.error(e);
             }
         })();
-
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -127,7 +135,7 @@ class PDP extends Component {
             <ImageListContainer>
                 {this.state.product?.gallery?.map((image, index) => (
                     <ImageWrapper onClick={() => this.setState((state) => ({...state, primaryImage: image}))} key={index}>
-                        <img src={image} width="70px" height="70px" alt="product" />
+                        <CustomImage src={image} alt="product" />
                     </ImageWrapper>
                 ))}
             </ImageListContainer>

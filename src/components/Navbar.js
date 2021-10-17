@@ -115,20 +115,24 @@ class Navbar extends Component {
 
     componentDidMount = () => {
         (async () => {
-            const categoriesResult = await client.query({
+            try {
+                const categoriesResult = await client.query({
                     query: gql`${GET_CATEGORIES}`
                 });
-            const currenciesResult = await client.query({
-                query: gql`${GET_CURRENCIES}`
-            })
-            this.props.getCategories(categoriesResult?.data?.categories);
-            this.props.getCurrencies(currenciesResult?.data?.currencies);
-            this.setState({
-                active: window.location.pathname.slice(1)
-            })
+                const currenciesResult = await client.query({
+                    query: gql`${GET_CURRENCIES}`
+                })
+                this.props.getCategories(categoriesResult?.data?.categories);
+                this.props.getCurrencies(currenciesResult?.data?.currencies);
+                this.setState({
+                    active: window.location.pathname.slice(1)
+                })
 
-            let option = document.getElementById(`option-${this.props.currency}`);
-            option.innerText = option.getAttribute('data-display');
+                let option = document.getElementById(`option-${this.props.currency}`);
+                option.innerText = option.getAttribute('data-display');
+            } catch (e) {
+                console.error(e);
+            }
         })();
     }
 

@@ -37,26 +37,30 @@ class Shop extends Component {
     }
 
     getItemsByCategory = async () => {
-        const { category } = this.props?.match?.params;
-        const categoryQuery = GET_PRODUCTS_BY_CATEGORY(category);
-        const productResult = await client
-            .query({
-                query: gql`${categoryQuery}`
-            });
-        this.props.getProductsByCategory(productResult?.data?.category?.products, category);
+        try {
+            const { category } = this.props?.match?.params;
+            const categoryQuery = GET_PRODUCTS_BY_CATEGORY(category);
+            const productResult = await client
+                .query({
+                    query: gql`${categoryQuery}`
+                });
+            this.props.getProductsByCategory(productResult?.data?.category?.products, category);
 
 
-        this.setState((prevState) => ({
-            ...prevState,
-            category,
-        }))
+            this.setState((prevState) => ({
+                ...prevState,
+                category,
+            }))
+        } catch (e) {
+            console.error(e);
+        }
     }
     componentDidMount = () => {
         this.getItemsByCategory();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const { category } = this.props?.match?.params
+        const { category } = this.props?.match?.params;
         if(prevState.category !== category && !this.props.products[category]) {
            this.getItemsByCategory();
         }

@@ -1,4 +1,4 @@
-import { Router, Route, Switch, Redirect } from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
 import history from "./history";
 import Shop from "../components/Shop";
 import PDP from "../components/PDP";
@@ -15,9 +15,6 @@ export const Routes = () => (
             </Route>
             <Route path="/:category" exact>
                 <Shop/>
-            </Route>
-            <Route path="/*">
-                <Redirect to={"/clothes"}/>
             </Route>
         </Switch>
     </Router>

@@ -1,10 +1,9 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import ReactHtmlParser from "react-html-parser";
 import { decreaseProductAmount, handleShowCartOverlay, increaseProductAmount } from "../redux/shop/actions";
 import history from "../routes/history";
-import { getNumberOfItemsInCart, getProductPrice, stringContainsDangerousTags } from "../helpers";
+import { getNumberOfItemsInCart, getProductPrice } from "../helpers";
 import { TextCenter } from "../shared-components";
 
 const StyledCartOverlay = styled.div`
@@ -30,11 +29,6 @@ const SizeContainer = styled.span`
 const Header = styled.div`
   font-size: 14px;
   font-weight: bold;
-  padding: 10px 2px;
-`;
-
-const Description = styled.div`
-  font-size: 12px;
   padding: 10px 2px;
 `;
 
@@ -122,11 +116,6 @@ class CartOverlay extends Component {
                                             <Header>
                                                 {cartItem.product.name}
                                             </Header>
-                                            {!stringContainsDangerousTags(this.state?.product?.description) &&
-                                                <Description>
-                                                    {ReactHtmlParser(this.state.product?.description)}
-                                                </Description>
-                                            }
                                             <Header>
                                                 {getProductPrice(cartItem.product.prices, this.props.currency)}
                                             </Header>

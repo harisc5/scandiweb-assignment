@@ -28,7 +28,7 @@ const StyledCardWrapper = styled.div`
 
 const CustomImage = styled.img`
   width: 100%;
-  opacity: ${(state) => state.instock ? '1' : '0.3'};
+  opacity: ${(state) => state.instock ? '1' : '0.5'};
 `
 
 const OutOfStockOverlay = styled.div`
@@ -49,7 +49,7 @@ const AddToCartImage = styled.img`
   display: none;
   position: absolute;
   right: 30px;
-  bottom: 10px;
+  bottom: 40px;
   transform: translate(50%, -50%);
   align-items: center;
   justify-content: center;
