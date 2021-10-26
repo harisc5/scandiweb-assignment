@@ -2,34 +2,48 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { decreaseProductAmount, handleShowCartOverlay, increaseProductAmount } from "../redux/shop/actions";
-import { StyledOverlay, TextCenter } from "../shared-components";
+import { StyledOverlay } from "../shared-components";
 import { getProductPrice } from "../helpers";
 
 const SizeContainer = styled.span`
-  border: 1px solid black;
-  font-size: 18px;
+  width: 63px;
+  height: 45px;
+  border: 1px solid #1D1F22;
+  box-sizing: border-box;
   margin: 5px;
-  padding: 10px;
-  color: ${(props) => (props.selected ? 'white ' : 'black')};;
-  background-color: ${(props) => (props.selected ? 'black ' : 'white')};;
+  color: ${(props) => (props.selected ? '#FFFFFF ' : '#1D1F22')};
+  background-color: ${(props) => (props.selected ? '#1D1F22 ' : '#FFFFFF')};
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.05em;
+  text-align: center;
+  padding: 12px 26px 15px 28px;
 `;
 
 const Header = styled.div`
-  font-size: 24px;
-  font-weight: bold;
-  padding: 10px 5px;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: 0;
+  text-align: left;
+  margin-bottom: 59px;
+  margin-top: 80px;
 `;
 
 const BreakLine = styled.hr`
   border: 1px solid #E9E9E9;
   width: 100%;
-  margin-top: 25px;
+  margin-top: 20px;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-self: center;
 `;
 
 const ImageWrapper = styled.div`
@@ -38,9 +52,11 @@ const ImageWrapper = styled.div`
 `;
 
 const CustomButton = styled.button`
-  padding: 5px 10px;
-  background-color: white;
-  border: ${(props => props.borderunset ? 'unset': '')};
+  height: 12px;
+  width: 6px;
+  align-self: center;
+  border: unset;
+  background: #FFFF;
   
   &:hover{
     cursor: pointer;
@@ -54,6 +70,64 @@ const FlexContainer = styled.div`
 
 const AttributeName = styled.div`
   margin: 20px 5px;
+`;
+
+const ProductBrand = styled.p`
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 27px;
+  letter-spacing: 0;
+  text-align: left;
+`;
+
+const ProductName = styled.p`
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 27px;
+  letter-spacing: 0;
+  text-align: left;
+`;
+
+const ProductPrice = styled.p`
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 0;
+  text-align: left;
+
+`;
+
+const QuantityHeader = styled.p`
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 38px;
+  letter-spacing: 0;
+  text-align: center;
+  margin-bottom: 30px;
+  margin-top: 30px;
+`;
+
+const CustomImage = styled.img`
+  height: 185px;
+  width: 141px;
+  object-fit: contain;
+  align-self: center;
+`;
+
+const CustomButtonIncreaseDecrease = styled.button`
+  border: 1px solid #1D1F22;
+  box-sizing: border-box;
+  height: 45px;
+  width: 45px;
+  background: #FFFF;
+
+  &:hover{
+    cursor: pointer;
+  }
 `;
 
 class Cart extends Component {
@@ -103,22 +177,22 @@ class Cart extends Component {
             <div>
                 {!!this.props.cart.length ?
                     <>
-                        <Header>Cart</Header>
+                        <Header>CART</Header>
                         <div>
                             {this.props.cart.map(({ item: cartItem, quantity }, index) => (
                                 <Fragment key={index}>
                                     <BreakLine/>
                                     <FlexContainer>
                                         <div>
-                                            <Header>
+                                            <ProductBrand>
                                                 {cartItem.product.brand}
-                                            </Header>
-                                            <Header>
+                                            </ProductBrand>
+                                            <ProductName>
                                                 {cartItem.product.name}
-                                            </Header>
-                                            <Header>
+                                            </ProductName>
+                                            <ProductPrice>
                                                 {getProductPrice(cartItem.product.prices, this.props.currency)}
-                                            </Header>
+                                            </ProductPrice>
                                             {!!cartItem?.product?.attributes?.length &&
                                                 <>
                                                     <div>
@@ -141,33 +215,31 @@ class Cart extends Component {
                                         </div>
                                         <ImageWrapper>
                                             <ButtonWrapper>
-                                                <CustomButton onClick={() => this.props.increaseProductAmount(cartItem.product?.id, cartItem.attributes)}>+</CustomButton>
-                                                <TextCenter>{quantity}</TextCenter>
-                                                <CustomButton
+                                                <CustomButtonIncreaseDecrease
+                                                    onClick={() => this.props.increaseProductAmount(cartItem.product?.id, cartItem.attributes)}
+                                                >
+                                                    +
+                                                </CustomButtonIncreaseDecrease>
+                                                <QuantityHeader>{quantity}</QuantityHeader>
+                                                <CustomButtonIncreaseDecrease
                                                     onClick={() =>
                                                         this.props.decreaseProductAmount(cartItem.product.id, cartItem.attributes)}
                                                 >
                                                     -
-                                                </CustomButton>
+                                                </CustomButtonIncreaseDecrease>
                                             </ButtonWrapper>
                                             <CustomButton
                                                 onClick={() => this.updateCurrentProductImage(index, cartItem.product.gallery.length, false)}
                                                 borderunset
-                                            >
-                                                {`<`}
-                                            </CustomButton>
-                                            <img
-                                                width="300px"
-                                                height="300px"
+                                            >{'<'}</CustomButton>
+                                                <CustomImage
                                                 src={cartItem.product.gallery[this.state.activeImages[index]]}
                                                 alt="product"
                                             />
                                             <CustomButton
                                                 onClick={() => this.updateCurrentProductImage(index, cartItem.product.gallery.length)}
                                                 borderunset
-                                            >
-                                                {`>`}
-                                            </CustomButton>
+                                            >{'>'}</CustomButton>
                                         </ImageWrapper>
                                     </FlexContainer>
                                 </Fragment>

@@ -1,41 +1,58 @@
-import React, { Component, Fragment } from "react";
-import { connect } from "react-redux";
+import React, {Component, Fragment} from "react";
+import {connect} from "react-redux";
 import styled from "styled-components";
-import { decreaseProductAmount, handleShowCartOverlay, increaseProductAmount } from "../redux/shop/actions";
+import {decreaseProductAmount, handleShowCartOverlay, increaseProductAmount} from "../redux/shop/actions";
 import history from "../routes/history";
-import { getNumberOfItemsInCart, getProductPrice } from "../helpers";
-import { TextCenter } from "../shared-components";
+import {getNumberOfItemsInCart, getProductPrice} from "../helpers";
 
 const StyledCartOverlay = styled.div`
   position: absolute;
   top: 55px;
   right: 20px;
   z-index: 1;
-  width: 350px;
-  background-color: white;
+  background-color: #FFFF;
   padding: 5px;
+  max-height: 540px;
+  width: 325px;
+  overflow-y: auto;
 `;
 
-const SizeContainer = styled.span`
-  border: 1px solid black;
+const SizeContainer = styled.div`
+  border: 1px solid #1D1F22;
+  box-sizing: border-box;
   font-size: 14px;
-  margin: 1px;
-  padding: 5px;
-  color: black;
-  background-color: ${(props) => (props.selected ? 'white ': '#A6A6A6')};
-  opacity: ${(props) => (props.selected ?  1 : 0.5)};
+  color: #1D1F22;
+  background-color: ${(props) => (props.selected ? 'white ' : '#A6A6A6')};
+  opacity: ${(props) => (props.selected ? 1 : 0.5)};
+  font-family: 'Source Sans Pro', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0;
+  //width: 30px;
+  //height: 30px;
+  text-align: center;
+  //max-width: 40px;
+  margin-right: 5px;
+  align-self: center;
+  padding: 1px;
 `;
 
 const Header = styled.div`
-  font-size: 14px;
-  font-weight: bold;
   padding: 10px 2px;
+  font-style: normal;
+  font-size: 16px;
+  color: #1D1F22;
+  display: flex;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: 0;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
 `;
 
 const ImageWrapper = styled.div`
@@ -45,34 +62,116 @@ const ImageWrapper = styled.div`
 
 const CustomButton = styled.button`
   padding: 5px 10px;
-  border: ${(props => props.borderunset ? 'unset': '')};
+  border: ${(props => props.borderunset ? 'unset' : '')};
   background-color: ${(props => props.backgroundcolor ? props.backgroundcolor : 'white')};
   color: ${(props => props.textcolor ? props.textcolor : 'black')};
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const CustomButtonViewBagCheckout = styled.button`
+  height: 43px;
+  width: 145px;
+  border-radius: 0;
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 17px;
+  letter-spacing: 0;
+  text-align: center;
+  border: 1px solid #1D1F22;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 32px;
+  color: ${(props => props.buttonType === 'viewbag' ? '#FFFFFF' : '#1D1F22')};
+  background-color: ${(props => props.buttonType === 'viewbag' ? '#5ECE7B' : '#FFFFFF')};
+  border: ${(props => props.buttonType === 'viewbag' ? 'unset' : '')};
   
-  &:hover{
+  &:hover {
     cursor: pointer;
   }
 `;
 
 const FlexContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   margin-bottom: 10px;
+  align-items: ${(props => props.alignitems ? props.alignitems : '')};
+  justify-content: ${(props => props.justifycontent ? props.justifycontent : '')};
 `;
 
 const StyledImage = styled.img`
   align-self: center;
+  height: 137px;
+  width: 105px;
+  object-fit: contain;
 `;
 
 const AttributesFlexContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-
+  display: grid;
+  //flex-direction: column;
+  //justify-content: space-evenly;
 `;
 
 const AttributeName = styled.div`
-  margin: 20px 0;
+  width: 100%;
+`;
+
+const StaticHeader = styled.div`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 26px;
+  letter-spacing: 0;
+  text-align: right;
+`;
+
+const CartHeader = styled.div`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 26px;
+  letter-spacing: 0;
+`;
+
+const PriceHeader = styled.div`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: 0;
+`
+
+const QuantityHeader = styled.div`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: 0;
+  text-align: center;
+`;
+
+const TotalHeader = styled.p`
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0;
+`;
+
+const PriceAmount = styled.p`
+  font-family: 'Raleway', sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 26px;
+  letter-spacing: 0;
 `;
 
 class CartOverlay extends Component {
@@ -88,9 +187,9 @@ class CartOverlay extends Component {
     calculateTotalPrice = () => {
         let total = 0;
         let currency = '';
-        this.props.cart.forEach(({ item, quantity }) => {
+        this.props.cart.forEach(({item, quantity}) => {
             let price = getProductPrice(item.product.prices, this.props.currency);
-            currency = price.substring(0,1);
+            currency = price.substring(0, 1);
             let amount = parseFloat(price.substring(1));
             total += (amount * quantity);
         });
@@ -104,40 +203,43 @@ class CartOverlay extends Component {
             <StyledCartOverlay>
                 {!!this.props.cart.length ?
                     <>
-                        <Header>My bag, {getNumberOfItemsInCart(this.props.cart)} items</Header>
+                        <Header>
+                            <StaticHeader>My bag, &nbsp;</StaticHeader>
+                            {getNumberOfItemsInCart(this.props.cart)} items
+                        </Header>
                         <div>
-                            {this.props.cart.map(({ item: cartItem, quantity }, index) => (
+                            {this.props.cart.map(({item: cartItem, quantity}, index) => (
                                 <Fragment key={index}>
                                     <FlexContainer>
-                                        <div>
-                                            <Header>
+                                        <div style={{width: '70%'}}>
+                                            <CartHeader>
                                                 {cartItem.product.brand}
-                                            </Header>
-                                            <Header>
+                                            </CartHeader>
+                                            <CartHeader>
                                                 {cartItem.product.name}
-                                            </Header>
-                                            <Header>
+                                            </CartHeader>
+                                            <PriceHeader>
                                                 {getProductPrice(cartItem.product.prices, this.props.currency)}
-                                            </Header>
+                                            </PriceHeader>
                                             <AttributesFlexContainer>
                                                 {!!cartItem?.product?.attributes?.length &&
-                                                    <>
-                                                        <div>
-                                                            {cartItem?.product?.attributes?.map((attribute, sizeIndex) => (
-                                                                <Fragment key={sizeIndex}>
-                                                                    <AttributeName>{attribute.name.toUpperCase()}</AttributeName>
-                                                                    {attribute?.items?.map((item, itemIndex) => (
-                                                                        <SizeContainer
-                                                                            key={itemIndex}
-                                                                            selected={cartItem?.attributes[attribute?.id] === item?.id}
-                                                                        >
-                                                                            {item?.displayValue}
-                                                                        </SizeContainer>
-                                                                    ))}
-                                                                </Fragment>
-                                                            ))}
+                                                <>
+                                                    {cartItem?.product?.attributes?.map((attribute, sizeIndex) => (
+                                                        <div key={sizeIndex}>
+                                                            <AttributeName>{attribute.name.toUpperCase()}</AttributeName>
+                                                            <div style={{display: 'flex'}}>
+                                                                {attribute?.items?.map((item, itemIndex) => (
+                                                                    <SizeContainer
+                                                                        key={itemIndex}
+                                                                        selected={cartItem?.attributes[attribute?.id] === item?.id}
+                                                                    >
+                                                                        {item?.displayValue}
+                                                                    </SizeContainer>
+                                                                ))}
+                                                            </div>
                                                         </div>
-                                                    </>
+                                                    ))}
+                                                </>
                                                 }
                                             </AttributesFlexContainer>
                                         </div>
@@ -150,7 +252,7 @@ class CartOverlay extends Component {
                                                 >
                                                     +
                                                 </CustomButton>
-                                                <TextCenter>{quantity}</TextCenter>
+                                                <QuantityHeader>{quantity}</QuantityHeader>
                                                 <CustomButton onClick={() =>
                                                     this.props.decreaseProductAmount(cartItem?.product?.id, cartItem?.attributes)}
                                                 >
@@ -158,8 +260,6 @@ class CartOverlay extends Component {
                                                 </CustomButton>
                                             </ButtonWrapper>
                                             <StyledImage
-                                                width="60px"
-                                                height="60px"
                                                 src={cartItem.product.gallery[0]}
                                                 alt="product"
                                             />
@@ -168,26 +268,24 @@ class CartOverlay extends Component {
                                 </Fragment>
                             ))}
                         </div>
-                        <FlexContainer>
-                            <CustomButton onClick={() => {
+                        <FlexContainer justifycontent="space-between">
+                            <TotalHeader>Total</TotalHeader>
+                            <PriceAmount>{this.calculateTotalPrice()}</PriceAmount>
+                        </FlexContainer>
+                        <FlexContainer justifycontent="space-between">
+                            <CustomButtonViewBagCheckout onClick={() => {
                                 this.props.handleShowCartOverlay();
                                 history.push('/cart');
                             }}
                             >
                                 VIEW BAG
-                            </CustomButton>
-                            <CustomButton
-                                backgroundcolor={"#5ECE7B"}
-                                textcolor={'white'}
-                                borderunset
+                            </CustomButtonViewBagCheckout>
+                            <CustomButtonViewBagCheckout
+                                buttonType="viewbag"
                                 onClick={() => alert('THANK YOU FOR BUYING')}
                             >
-                                CHECKOUT
-                            </CustomButton>
-                        </FlexContainer>
-                        <FlexContainer>
-                            <Header>Total</Header>
-                            <Header>{this.calculateTotalPrice()}</Header>
+                                CHECK OUT
+                            </CustomButtonViewBagCheckout>
                         </FlexContainer>
                     </>
                     :
@@ -201,4 +299,4 @@ class CartOverlay extends Component {
 export default connect((state) => ({
     cart: state.shop.cart.items,
     currency: state.shop.currency,
-}), { increaseProductAmount, decreaseProductAmount, handleShowCartOverlay })(CartOverlay);
+}), {increaseProductAmount, decreaseProductAmount, handleShowCartOverlay})(CartOverlay);

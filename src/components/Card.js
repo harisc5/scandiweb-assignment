@@ -8,12 +8,14 @@ import { addItemToCart } from "../redux/shop/actions";
 
 const StyledCardWrapper = styled.div`
   position: relative;
-  width: 25%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin-right: 7%;
-  
+  height: 444px;
+  width: 386px;
+  padding: 16px;
+  color: ${(state) => state.instock ? '#1D1F22' : '#8D8F9A'};
 
   &:hover {
     cursor: ${(state) => state.instock === true ? 'pointer' : 'not-allowed'};
@@ -27,7 +29,10 @@ const StyledCardWrapper = styled.div`
 `;
 
 const CustomImage = styled.img`
-  width: 100%;
+  height: 330px;
+  width: 354px;
+  object-fit: contain;
+  border-radius: 0;
   opacity: ${(state) => state.instock ? '1' : '0.5'};
 `
 
@@ -36,7 +41,12 @@ const OutOfStockOverlay = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: black;
+  color: #8D8F9A;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 38px;
+  letter-spacing: 0;
 `;
 
 const ImageWrapper = styled.div`
@@ -58,6 +68,27 @@ const AddToCartImage = styled.img`
 
 const ProductInfoWrapper = styled.div`
   padding: 0 20px;
+`;
+
+const ProductBrandName = styled.div`
+  font-style: normal;
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 160%;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0px;
+  text-align: left;
+`;
+
+const Price = styled.div`
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 160%;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 `;
 
 class Card extends Component {
@@ -103,9 +134,9 @@ class Card extends Component {
                         />
                 }
                 <ProductInfoWrapper>
-                    <div>{this.props.product.brand}</div>
-                    <div>{this.props.product.name}</div>
-                    <h3>{getProductPrice(this.props.product.prices, this.props.currency)}</h3>
+                    <ProductBrandName>{this.props.product.brand}</ProductBrandName>
+                    <ProductBrandName>{this.props.product.name}</ProductBrandName>
+                    <Price>{getProductPrice(this.props.product.prices, this.props.currency)}</Price>
                 </ProductInfoWrapper>
             </StyledCardWrapper>
         )

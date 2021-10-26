@@ -6,8 +6,7 @@ export const StyledOverlay = styled.div`
   top:0;
   width:100vw;
   height:100vh;
-  background-color:#000;
-  opacity:0.5;
+  background: rgba(57, 55, 72, 0.22);
 `;
 
 export const ImageWrapper = styled.div`

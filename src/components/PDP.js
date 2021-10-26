@@ -28,41 +28,75 @@ const SizeContainer = styled.span`
   width: 63px;
   height: 45px;
   border: 1px solid #1D1F22;
-  font-size: 18px;
-  margin: 5px;
-  padding: 10px;
-  color:  ${(props) => (props.selected ? 'white ': 'black')};
-  background-color:  ${(props) => (props.selected ? 'black ': 'white')};
-
+  box-sizing: border-box;
+  padding: 13px 27px 14px 27px ;
+  color:  ${(props) => (props.selected ? '#FFFFFF ': '#1D1F22')};
+  background-color:  ${(props) => (props.selected ? '#1D1F22 ': '#FFFFFF')};
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.05em;
+  text-align: center;
+  margin-right: 12px;
+  
   &:hover {
     cursor: pointer;
   }
 `;
 
-const StyledSizeHeader = styled.h4`
-  padding-left: 5px;
+const StyledSizeHeader = styled.p`
+  min-width: 38px;
+  height: 18px;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-style: normal;
+  font-size: 18px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #1D1F22;
+  font-weight: 700;
+  letter-spacing: 0;
 `
 
 const PriceContainer = styled.div`
-  margin: 5px;
+  //margin: 5px;
 `;
 
 const StyledButton = styled.div`
   font-size: 16px;
-  background-color: ${(props) => (props.disabled ? 'gray ': '#5ECE7B')};
+  background-color: ${(props) => (props.disabled ? '#A6A6A6 ': '#5ECE7B')};
   color: white;
-  padding: 15px;
   text-align: center;
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 32px;
+  width: 292px;
+  height: 52px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 19px;
+  letter-spacing: 0;
+
   &:hover:not([disabled]) {
     cursor: pointer;
   }
 `;
 
 const StyledDescription = styled.div`
-  padding-top: 30px;
-  text-align: justify;
-  max-width: 300px;
+  height: 103px;
+  width: 292px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26px;
+  letter-spacing: 0;
+  text-align: left;
 `;
 
 const ImageListContainer = styled.div`
@@ -70,9 +104,66 @@ const ImageListContainer = styled.div`
 `
 
 const CustomImage = styled.img`
-  width: 79px;
-  height: 80px;
+  height: 87.60px;
+  width: 176.65px;
+  object-fit: contain;
 `;
+
+const PrimaryImage = styled.img`
+  height: 511px;
+  width: 610px;
+  object-fit: contain;
+`;
+
+const ProductBrand = styled.p`
+  width: 292px;
+  height: 27px;
+  font-family: 'Raleway', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 27px;
+  display: flex;
+  align-items: center;
+  color: #1D1F22;
+`;
+
+const ProductName = styled.p`
+  width: auto;
+  height: 27px;
+  font-family: 'Raleway', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 30px;
+  line-height: 27px;
+  display: flex;
+  align-items: center;
+  color: #1D1F22;
+`;
+
+const PriceText = styled.p`
+  width: 50px;
+  height: 18px;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-style: normal;
+  font-size: 18px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #1D1F22;
+  font-weight: 700;
+  letter-spacing: 0;
+`;
+
+const ProductAmount = styled.p`
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 0em;
+  text-align: left;
+`
 
 class PDP extends Component {
     constructor(props) {
@@ -140,20 +231,20 @@ class PDP extends Component {
                 ))}
             </ImageListContainer>
               <div>
-                  <img src={this.state?.primaryImage} alt="primary"/>
+                  <PrimaryImage src={this.state?.primaryImage} alt="primary"/>
               </div>
               <div>
                   <div>
-                      <StyledSizeHeader>{this.state?.product?.brand}</StyledSizeHeader>
-                      <StyledSizeHeader>{this.state?.product?.name}</StyledSizeHeader>
+                      <ProductBrand>{this.state?.product?.brand}</ProductBrand>
+                      <ProductName>{this.state?.product?.name}</ProductName>
                   </div>
                   <FlexContainer flexdirection="column" maxwidth="500px">
                       {!!this.state?.product?.attributes?.length &&
                           <>
                               <div>
                                   {this.state?.product?.attributes?.map((attribute, sizeIndex) => (
-                                      <Fragment key={sizeIndex}>
-                                          <StyledSizeHeader>{attribute.name.toUpperCase()}</StyledSizeHeader>
+                                      <div key={sizeIndex}>
+                                          <StyledSizeHeader>{attribute.name.toUpperCase()}:</StyledSizeHeader>
                                           {attribute?.items.map((item, itemIndex) => (
                                               <SizeContainer
                                                   key={itemIndex}
@@ -163,14 +254,14 @@ class PDP extends Component {
                                                   {item?.displayValue}
                                               </SizeContainer>
                                           ))}
-                                      </Fragment>
+                                      </div>
                                   ))}
                               </div>
                           </>
                       }
                       <PriceContainer>
-                          <h4>PRICE:</h4>
-                          <h2>{getProductPrice(this.state.product?.prices, this.props.currency)}</h2>
+                          <PriceText>PRICE:</PriceText>
+                          <ProductAmount>{getProductPrice(this.state.product?.prices, this.props.currency)}</ProductAmount>
                       </PriceContainer>
                       <StyledButton
                           onClick={() => this.props.addItemToCart({
